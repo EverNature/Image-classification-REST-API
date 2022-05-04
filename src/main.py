@@ -7,10 +7,9 @@ from PIL import Image
 import tensorflow as tf
 from datetime import datetime
 
-
 app = FastAPI()
 
-MODEL = tf.keras.models.load_model("modelo/vgg16_weights_full_model")
+MODEL = tf.keras.models.load_model("C:/Users/aritz/OneDrive/Escritorio/MUUUH/3. maila/2/PBL/IA/saved_models/vgg16_weights_full_model")
 
 CLASS_NAMES = ['ABBOTTS BABBLER',
  'ABBOTTS BOOBY',
