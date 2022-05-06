@@ -49,16 +49,21 @@ def get_image_object(img):
     indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 
     font = cv2.FONT_HERSHEY_PLAIN
-    label = ''
+    labels = []
+    imgsOut = []
+    img_copy = img.copy()
+    
     for i in range(len(boxes)):
         if i in indexes:
             x, y, w, h = boxes[i]
             label = str(classes[class_ids[i]])
+
+            labels.append(label)
+            imgsOut.append(img_copy[y:y+h, x:x+w])
+
             color = colors[class_ids[i]]
+            # cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
+            # cv2.putText(img, label, (x, y + 30), font, 3, color, 3)
 
-    if len(boxes) > 0:
-        imgOut = img[y:y+h, x:x+w]
-    else:
-        imgOut = img
 
-    return imgOut, label
+    return imgsOut, img, labels
