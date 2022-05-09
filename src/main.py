@@ -24,13 +24,35 @@ CLASS_NAMES = ['ABBOTTS BABBLER',
  'GREAT KISKADEE',
  'HOUSE FINCH']
 
-# Coge los bytes que llegan y los transforma en una imagen, un array de RGB
 def read_file_as_image(data) -> np.ndarray:
+    """
+    This funtion return an array of RGB
+
+    Inputs:
+        :data: Array of bytes
+
+    Returns:
+        :: Array of RGB
+    """
     image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     return image
 
-# Esta función coge los datos que se quieren devolver y se transforma en un JSON 
 def create_json(images, segmented, predicted_classes, confidences, predicted, msgs):
+    """
+    This function creates a json
+
+    Inputs:
+        :images: an array of all the images that opencv segmented
+        :segmented: the image has been segmented
+        :predicted_classes: an array of all the predicted classes
+        :confidences: an array of all the conficendes
+        :predicted: the model has been used
+        :msg: the message that is gonna be send
+
+    Returns:
+        :: a json
+    """
+
     data = []
     for i in range(len(images)):
         if segmented:
@@ -44,23 +66,35 @@ def create_json(images, segmented, predicted_classes, confidences, predicted, ms
 
 # El array de RBG se transforma en base64
 def encode_image(image):
+    """
+    Transform the array of RBG to base64
+
+    Inputs:
+        :image: the image to encode
+
+    Returns:
+        :: the image encoded
+    """
     _, im_arr = cv2.imencode('.jpg', image)  # im_arr: image in Numpy one-dim array format.
     im_bytes = im_arr.tobytes()
     im_b64 = base64.b64encode(im_bytes)
 
     return im_b64
 
-# Este post recibe el archivo de la imagen, luego se segmenta en los diferentes objetos que haya y se usa el modelo para predecir el animal que es
-# Despues se responde con un mensaje con los siguentes apartados: predicted_class, confidence, predicted, msg, img
-# predicted_class: que clase dice que es la IA
-# confidence: confianza de la IA
-# predicted: si se ha utilizado el modelo de la IA
-# msg: mensaje personalizado
-# img: imagen del animal
 @app.post("/predict")
 async def predict(
     file: UploadFile = File(...)
 ):
+
+    """
+    This funtion recive a file, use the object detection and predice the animal
+
+    Inputs:
+        :file: the image file
+
+    Returns:
+        ::json with all the data
+    """
 
     predictions = []
     predicted_classes = []
