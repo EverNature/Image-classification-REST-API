@@ -59,11 +59,7 @@ def get_image_object(img):
             label = str(classes[class_ids[i]])
 
             labels.append(label)
-            imgsOut.append(img_copy[y:y+h, x:x+w])
-
-            color = colors[class_ids[i]]
-            # cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-            # cv2.putText(img, label, (x, y + 30), font, 3, color, 3)
+            imgsOut.append(img_copy[y:y+h+10, x:x+w+10])
 
 
     return imgsOut, img, labels

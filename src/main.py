@@ -2,6 +2,8 @@ from fastapi import FastAPI, File, UploadFile
 import base64
 import uvicorn
 import numpy as np
+from io import BytesIO
+from PIL import Image
 import tensorflow as tf
 from datetime import datetime
 from opencv import get_image_object, cv2
@@ -22,10 +24,12 @@ CLASS_NAMES = ['ABBOTTS BABBLER',
  'GREAT KISKADEE',
  'HOUSE FINCH']
 
+# Coge los bytes que llegan y los transforma en una imagen, un array de RGB
 def read_file_as_image(data) -> np.ndarray:
     image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     return image
 
+# Esta función coge los datos que se quieren devolver y se transforma en un JSON 
 def create_json(images, segmented, predicted_classes, confidences, predicted, msgs):
     data = []
     for i in range(len(images)):
@@ -38,6 +42,7 @@ def create_json(images, segmented, predicted_classes, confidences, predicted, ms
             data.append(item2)
     return data
 
+# El array de RBG se transforma en base64
 def encode_image(image):
     _, im_arr = cv2.imencode('.jpg', image)  # im_arr: image in Numpy one-dim array format.
     im_bytes = im_arr.tobytes()
@@ -45,6 +50,13 @@ def encode_image(image):
 
     return im_b64
 
+# Este post recibe el archivo de la imagen, luego se segmenta en los diferentes objetos que haya y se usa el modelo para predecir el animal que es
+# Despues se responde con un mensaje con los siguentes apartados: predicted_class, confidence, predicted, msg, img
+# predicted_class: que clase dice que es la IA
+# confidence: confianza de la IA
+# predicted: si se ha utilizado el modelo de la IA
+# msg: mensaje personalizado
+# img: imagen del animal
 @app.post("/predict")
 async def predict(
     file: UploadFile = File(...)
@@ -73,7 +85,7 @@ async def predict(
             predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
             confidence = np.max(predictions[0])
 
-            if confidence < 0.8:
+            if confidence < 0.85:
                 predicted_class = ''
                 confidence = 0.0
                 msgs.append('Unrecognized animal predicted by the model')
@@ -90,7 +102,7 @@ async def predict(
             predicted_classes.append(predicted_class)
             confidence = 0.0
             confidences.append(confidence)
-            predicted.append(False)
+            predicted.append(True)
             msgs.append('Unknown animal')
             segmented = True
 
@@ -108,8 +120,8 @@ async def predict(
 
     return {
         'prediction' : data,
-        "date": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'segmented' : segmented,
+        "date": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'full_image' : im_b64,
     }
 
