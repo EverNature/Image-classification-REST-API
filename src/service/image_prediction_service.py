@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 
 MODEL = tf.keras.models.load_model(
-     "C:/Users/aritz/OneDrive/Escritorio/MUUUH/3. maila/2/PBL/IA/saved_models/vgg16_weights_full_model")
+     "C:/Users/aritz/OneDrive/Escritorio/MUUUH/3. maila/2/PBL/IA/saved_models/vgg16_weights_full_model_v2_standarization")
 
 LABEL_NAMES = ['bird', 'cat', 'dog', 'horse', 'sheep',
      'cow', 'elephant', 'bear', 'zebra', 'giraffe']
@@ -29,7 +29,7 @@ def image_classification(images, labels, msgs, predicted_classes, confidences, p
             predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
             confidence = np.max(predictions[0])
 
-            if confidence < 0.80:
+            if confidence < 0.70:
                 predicted_class = ''
                 confidence = 0.0
                 msgs.append('Unrecognized animal predicted by the model')
@@ -41,7 +41,7 @@ def image_classification(images, labels, msgs, predicted_classes, confidences, p
             predicted.append(True)
             segmented = True
 
-        elif labels[i] in CLASS_NAMES:
+        elif labels[i] in LABEL_NAMES:
             predicted_class = ''
             predicted_classes.append(predicted_class)
             confidence = 0.0
