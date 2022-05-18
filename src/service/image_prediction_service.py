@@ -29,7 +29,7 @@ def image_classification(images, labels, msgs, predicted_classes, confidences, p
             predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
             confidence = np.max(predictions[0])
 
-            if confidence < 0.70:
+            if confidence < 0.50:
                 predicted_class = ''
                 confidence = 0.0
                 msgs.append('Unrecognized animal predicted by the model')
