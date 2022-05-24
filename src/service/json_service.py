@@ -20,9 +20,9 @@ def create_json(images, segmented, predicted_classes, confidences, predicted, ms
     for i in range(len(images)):
         if segmented:
             encode_image(images[i])
-            item1 = {"clas": predicted_classes[i], "confidence": str(confidences[i]), "predicted": predicted[i], "msg": msgs[i], "image": encode_image(images[i])}
+            item1 = {"clasc": predicted_classes[i], "confidence": str(confidences[i]), "predicted": predicted[i], "msg": msgs[i], "image": encode_image(images[i])}
             data.append(item1)
         else:
-            item2 = {"clas": "", "confidence": "", "predicted": "", "msg": "", "image": ''}
+            item2 = {"clasc": "", "confidence": "", "predicted": "", "msg": "", "image": ''}
             data.append(item2)
     return data
